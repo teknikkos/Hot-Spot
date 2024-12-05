@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <title>OMDb API</title>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="container flex">
+             <h1 class="logo"><a href="index.php">Hot Spot</a></h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Spot</a></li>
+                    <li><a href="spotify.html">Spotlines</a></li>
+                    <li><a href="maps.html">Spotted</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        
+    <div class="movie container">
+        <h1>Movie Search</h1>
+        <input class="search-bar" type="text" id="movie-title" placeholder="Enter movie title" />
+        <button class="btn" onclick="fetchMovie()">Search</button>
+    
+        <div id="movie-details">
+          <!-- Movie details will be displayed here -->
+        </div>
+      </div>
+    
+
+      <script>
+        // Replace this with your actual OMDb API key
+            const apiKey = 'cfa0ab17'; 
+
+            async function fetchMovie() {
+            const movieTitle = document.getElementById('movie-title').value;
+            const movieDetails = document.getElementById('movie-details');
+
+            if (!movieTitle) {
+                alert('Please enter a movie title');
+                return;
+            }
+
+            const url = `https://www.omdbapi.com/?t=${movieTitle}&apikey=${apiKey}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.Response === 'True') {
+                movieDetails.innerHTML = `
+                    <h2>${data.Title} (${data.Year})</h2>
+                    <img src="${data.Poster}" alt="${data.Title} Poster" />
+                    <p><strong>Plot:</strong> ${data.Plot}</p>
+                    <p><strong>Genre:</strong> ${data.Genre}</p>
+                    <p><strong>Director:</strong> ${data.Director}</p>
+                    <p><strong>Actors:</strong> ${data.Actors}</p>
+                    <p><strong>IMDB Rating:</strong> ${data.imdbRating}</p>
+                `;
+                } else {
+                movieDetails.innerHTML = `<p>Movie not found. Please try another title.</p>`;
+                }
+            } catch (error) {
+                movieDetails.innerHTML = `<p>An error occurred. Please try again later.</p>`;
+                console.error(error);
+            }
+            }
+
+      </script>
+</body>
+</html>

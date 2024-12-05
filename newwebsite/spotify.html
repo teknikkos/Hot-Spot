@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Hot Spot | Can't Finish This</title>
+</head>
+<body>
+
+    <!-- Navbar -->
+
+    <div class="navbar">
+        <div class="container flex">
+             <h1 class="logo"><a href="index.php">Hot Spot</a></h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Spot</a></li>
+                    <li><a href="spotify.html">Spotlines</a></li>
+                    <li><a href="maps.html">Spotted</a></li>
+                </ul>
+            </nav>
+        </div>
+        
+        <div class="spotify container">
+            <h1>News Headlines</h1>
+
+                <!-- Dropdown menu to select the country -->
+                <label for="country-select">Select Country:</label>
+                <select id="country-select">
+                    <option value="us">United States</option>
+                    <option value="ph">Philippines</option>
+                    <option value="gb">United Kingdom</option>
+                    <option value="in">India</option>
+                    <option value="ca">Canada</option>
+                    <option value="au">Australia</option>
+                    <option value="de">Germany</option>
+                    <option value="fr">France</option>
+                    <!-- Add more countries as needed -->
+                </select>
+
+                <!-- List to display the news -->
+                <ul id="news-list"></ul>
+        </div>
+        
+          <script>
+            const apiKey = '540fc9f73eb34909b263886acc92d9ee';  // Replace with your NewsAPI key
+
+            async function fetchNews(country) {
+      const endpoint = 'https://newsapi.org/v2/top-headlines';
+      try {
+        const response = await fetch(`${endpoint}?country=${country}&apiKey=${apiKey}`);
+        const data = await response.json();
+
+        if (data.status === 'ok') {
+          return data.articles;
+        } else {
+          console.error('Error fetching news:', data.message);
+          return [];
+        }
+      } catch (error) {
+        console.error('Error fetching news:', error);
+        return [];
+      }
+    }
+
+    // Function to display the news articles on the webpage
+    async function displayNews(country) {
+      const newsArticles = await fetchNews(country);
+      const newsList = document.getElementById('news-list');
+      
+      if (newsArticles.length === 0) {
+        newsList.innerHTML = 'No news found or an error occurred.';
+        return;
+      }
+
+      // Clear previous content
+      newsList.innerHTML = '';
+
+      // Render the news articles
+      newsArticles.forEach(({ title, description, url, urlToImage }) => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+          <h2>${title}</h2>
+          <p>${description || 'No description available'}</p>
+          <img src="${urlToImage || 'https://via.placeholder.com/150'}" alt="News Image" style="max-width: 150px;"/>
+          <a href="${url}" target="_blank">Read more</a>
+        `;
+        newsList.appendChild(listItem);
+      });
+    }
+
+    // Event listener for the dropdown menu
+    document.getElementById('country-select').addEventListener('change', (event) => {
+      const selectedCountry = event.target.value;
+      displayNews(selectedCountry);
+    });
+
+    // Initial page load (display news for the default country)
+    displayNews('us');  // Default to United States news
+          </script>
+</body>
+</html>
